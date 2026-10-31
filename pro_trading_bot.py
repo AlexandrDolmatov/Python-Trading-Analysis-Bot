@@ -17,7 +17,7 @@ import urllib.parse, time
 import ssl
 try:
     import certifi
-    _SSL_CTX = ssl.create_default_context(cafile=certifi.where())
+    _SSL_CTX = ssl.create_default_context(cafile=os.getenv("SSL_CERT_FILE") or os.getenv("REQUESTS_CA_BUNDLE") or certifi.where())
 except Exception:
     _SSL_CTX = ssl.create_default_context()
 
@@ -2545,7 +2545,7 @@ def run_selftest():
 
     # d) индикаторы + детектор
     if df is not None and not df.empty:
-        df = add_indicators(df, "US")
+        df = asyncio.run(add_indicators(df, "US"))
         sig = detect_breakout_retest_signal(df, TICKERS.get("AAPL",{}).get("profile", {}), ticker="AAPL")
         slog("INFO", f"Detector: {'OK' if sig or sig is None else 'OK'}", func="selftest")
 
@@ -3063,7 +3063,7 @@ def save_autotune_to_config(ticker: str, tuned: dict, config_path="tickers_confi
 # Запуск каждое утро
 async def main_loop():
     last_fetch_time = {}
-    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=_SSL_CTX)) as session:
+    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=_SSL_CTX), trust_env=True) as session:
         await send_bot_status(session, "Бот запущен ✅")
         asyncio.create_task(heartbeat(session))
         asyncio.create_task(monitor_active_trades(session))
@@ -3106,7 +3106,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.selftest:
-        run_selftest()
+        raise SystemExit(0 if run_selftest() else 1)
     elif args.autotune:
         t = args.autotune.upper()
         if t not in TICKERS:

@@ -6,6 +6,18 @@ The project was built as a personal research/engineering project to experiment w
 
 > **Disclaimer:** This project is for research and educational purposes. It does not provide financial advice and does not directly place broker orders.
 
+[Overview](#overview) · [Local verification](#offline-verification) · [Installation](#installation) · [Limitations](#limitations)
+
+## Offline verification
+
+```bash
+python examples/offline_check.py
+```
+
+This runs six functional checks using synthetic OHLCV data and real project functions, with no API requests or Telegram messages. It covers data cleanup, trading hours, local indicators, Parquet persistence, a constructed signal/backtest and vectorbt portfolio calculation. Temporary outputs are removed after the check. **These are software checks, not historical market results or evidence of profitability.**
+
+See [actual output](docs/offline-output.txt) and [validation details](docs/VALIDATION.md). Live market-data and Telegram workflows were not validated during this review.
+
 ## Overview
 
 The bot works primarily with intraday **5-minute OHLCV data** and implements a **Breakout + Retest** strategy.
@@ -387,16 +399,16 @@ source .venv/bin/activate
 Install dependencies:
 
 ```bash
-pip install requests pandas numpy aiohttp pandas-ta vectorbt pytz certifi pyarrow
+pip install -r requirements.txt
 ```
 
-Then create `.env` and `tickers_config.json`.
+Copy `.env.example` to `.env` for optional live integration. Keep the existing `tickers_config.json`; it contains the project's ticker profiles. The pinned dependency set was verified with **Python 3.12** on Linux. The bundled Windows TA-Lib wheel is a legacy artifact and is not required for this setup.
 
 ## Running
 
 ### Self-test
 
-Check the environment and configured services:
+Check the environment and configured services. **This mode sends a Telegram message when configured**; run it only against a chat you control. A successful process exit alone does not establish signal quality:
 
 ```bash
 python pro_trading_bot.py --selftest
@@ -535,6 +547,8 @@ The project is actively developed and used to experiment with:
 **Alexandr Dolmatov**
 
 GitHub: https://github.com/AlexandrDolmatov
+
+LinkedIn: https://www.linkedin.com/in/aleksandr-dolmatov-suai/
 
 ---
 

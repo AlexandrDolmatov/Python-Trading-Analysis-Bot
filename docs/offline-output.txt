@@ -1,0 +1,10 @@
+Actual output from examples/offline_check.py
+Synthetic fixtures; no market performance claim.
+
+PASS: OHLCV validation and deduplication: 312 bars
+PASS: US trading-session filtering
+PASS: 13 local indicators with pandas_ta
+PASS: Parquet round-trip and repeat-write deduplication
+PASS: Signal diagnostics and offline backtest pipeline
+PASS: vectorbt/Numba portfolio computation
+OFFLINE SMOKE: 6/6 passed; no external integrations exercised
